@@ -1,2 +1,2 @@
-# AmyCL
-Closed-loop Amygdala Stim Project
+# BLAES-CL
+Closed-loop BLAES Stim Project
