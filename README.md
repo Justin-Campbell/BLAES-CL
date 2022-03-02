@@ -1,2 +1,2 @@
 # BLAES-CL
-Closed-loop BLAES Stim Project
+Closed-loop BLAES Project
