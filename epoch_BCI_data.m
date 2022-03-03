@@ -51,6 +51,6 @@ for s_idx = 1:length(idxs) % loop through no_stim trials
 end
 
 % Summarize output
-fprintf('Created %d epochs with %ds pre- and %ds post-padding around the transition from %d to %d\n', size(epochs,1), pad(1), pad(2), start_code, end_code);
+% fprintf('Created %d epochs with %ds pre- and %ds post-padding around the transition from %d to %d\n', size(epochs,1), pad(1), pad(2), start_code, end_code);
 
 end
