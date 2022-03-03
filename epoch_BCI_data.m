@@ -1,4 +1,4 @@
-function [idxs, epochs] = epoch_BCI_data(states, parameters, start_code, end_code, pad)
+function [epoch_start_idxs, epochs] = epoch_BCI_data(states, parameters, start_code, end_code, pad)
 % 
 % epoch_BCI_data finds the index which marks the transition between two
 % stimulus codes and creates an epoch around that transition.
@@ -10,12 +10,12 @@ function [idxs, epochs] = epoch_BCI_data(states, parameters, start_code, end_cod
 %    - end_code, unique BCI2000 code for stimulus [int]
 %    - pad, time (in seconds) to pad around transition [2 x 1 array]
 % ArgOut:
-%    - idxs, index marking the transition from start_code to end-code [1 x n array]
+%    - epoch_start_idxs, index marking the transition from start_code to end-code [1 x n array]
 %    - epochs, indices surrounding transition from start_code to end-code
 %    with padding applied before/after [n x 1 cell]
 %
 % E.G.,:
-%    [idxs, epochs] = epoch_BCI_data(states, 1502, 1801, [0, 5]); % find
+%    [epoch_start_idxs, epochs] = epoch_BCI_data(states, 1502, 1801, [0, 5]); % find
 %    the transition from stim (1502) to ISI (1801) and create an epoch
 %    with 5 seconds of padding after end of stim
 %
@@ -25,26 +25,26 @@ function [idxs, epochs] = epoch_BCI_data(states, parameters, start_code, end_cod
 %% 
 
 % Find Trials
-idxs = [];
-for sc_idx = 1:length(states.StimulusCode)
-    if states.StimulusCode(sc_idx) == end_code; % if stimulus code matches end_code
-        if states.StimulusCode(sc_idx - 1) == start_code; % and if previous stimulus code matches start_code
-            idxs = [idxs (sc_idx)]; % add index of last sample to array (first instance of end_code, NOT last instance of start_code)
+epoch_start_idxs = [];
+for i = 1:length(states.StimulusCode)
+    if states.StimulusCode(i) == end_code; % if stimulus code matches end_code
+        if states.StimulusCode(i - 1) == start_code; % and if previous stimulus code matches start_code
+            epoch_start_idxs = [epoch_start_idxs (i)]; % add index of last sample to array (first instance of end_code, NOT last instance of start_code)
         end
     end
 end
 
 % Create epochs w/ padding (in seconds)
-epochs = cell(length(idxs),1);
+epochs = cell(length(epoch_start_idxs),1);
 pre_pad = pad(1) * parameters.SamplingRate.NumericValue;
 post_pad = pad(2) * parameters.SamplingRate.NumericValue;
-for s_idx = 1:length(idxs) % loop through no_stim trials
+for i = 1:length(epoch_start_idxs) % loop through no_stim trials
     if (pre_pad ~= 0) && (post_pad ~= 0) % pad pre- and post-
-        epochs{s_idx} = (idxs(s_idx) - post_pad):(idxs(s_idx) + post_pad);
+        epochs{i} = (epoch_start_idxs(i) - post_pad):(epoch_start_idxs(i) + post_pad);
     elseif (pre_pad == 0) && (post_pad ~= 0) % pad post- only
-        epochs{s_idx} = idxs(s_idx):(idxs(s_idx) + post_pad);
+        epochs{i} = epoch_start_idxs(i):(epoch_start_idxs(i) + post_pad);
     elseif (pre_pad ~= 0) && (post_pad == 0) % pad pre- only
-        epochs{s_idx} = (idxs(s_idx) - pre_pad):idxs(s_idx);
+        epochs{i} = (epoch_start_idxs(i) - pre_pad):epoch_start_idxs(i);
     else % no padding specified
         error('Need to specify padding (in sec) to create epochs!')
     end
