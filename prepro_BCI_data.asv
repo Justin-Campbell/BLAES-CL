@@ -1,0 +1,58 @@
+function [processed_signal] = epoch_BCI_data(signal);
+% 
+% epoch_BCI_data finds the index which marks the transition between two
+% stimulus codes and creates an epoch around that transition.
+%
+% ArgIn: 
+%    - states, state information generated from load_BCI_dat.m [1 x 1 struct]
+%    - parameters, parameter information generated from load_BCI_dat.m [1 x 1 struct]
+%    - start_code, unique BCI2000 code for stimulus [int]
+%    - end_code, unique BCI2000 code for stimulus [int]
+%    - pad, time (in seconds) to pad around transition [2 x 1 array]
+% ArgOut:
+%    - epoch_start_idxs, index marking the transition from start_code to end-code [1 x n array]
+%    - epochs, indices surrounding transition from start_code to end-code
+%    with padding applied before/after [n x 1 cell]
+%
+% E.G.,:
+%    processed = epoch_BCI_data(states, 1502, 1801, [0, 5]); % find
+%    the transition from stim (1502) to ISI (1801) and create an epoch
+%    with 5 seconds of padding after end of stim
+%
+% Author:    Justin Campbell
+% Contact:   justin.campbell@hsc.utah.edu 
+% Version:   03-08-2022
+
+%% ID Bad Channels
+% remove bad channels
+% ranges = [];
+% range_cutoff = 5000; % UPDATE?
+% for i = 1:length(dat_files)
+%     val_range = range(signal{i,1});
+%     within_range = val_range < range_cutoff;
+%     ranges = [ranges; within_range];
+% end
+% keep_chans = sum(ranges) > 0;
+% fprintf('%d bad channels removed\n', (length(keep_chans) - sum(keep_chans)));
+
+%%
+global Fs;
+
+%% Re-Referencing
+processed_signal = zeros(size(signal));
+for i = size(signal,2) % loop through chans
+    processed_signal(:,i) = double(signal(:,i)) - double(median(signal,2)); % common median re-reference
+end
+
+%% Filtering
+[b60,a60] = iirnotch(60/(Fs/2), (60/(Fs/2))/25); % 60Hz IIR filter
+[b120,a120] = iirnotch(120/(Fs/2), (120/(Fs/2))/25); % 120Hz IIR filter
+[bBand,aBand] = butter(3,[2,249]/(Fs/2)); % 2-249Hz bandpass filter
+
+processed_signal = filtfilt(b60,a60,processed_signal); 
+processed_signal = filtfilt(b120,a120,processed_signal);
+processed_signal = filtfilt(bBand, aBand, processed_signal);
+
+%%
+
+end

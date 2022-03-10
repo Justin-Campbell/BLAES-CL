@@ -4,14 +4,14 @@ function [epoch_start_idxs, epochs] = epoch_BCI_data(states, parameters, start_c
 % stimulus codes and creates an epoch around that transition.
 %
 % ArgIn: 
-%    - states, state information generated from load_BCI_dat.m [1 x 1 struct]
-%    - parameters, parameter information generated from load_BCI_dat.m [1 x 1 struct]
-%    - start_code, unique BCI2000 code for stimulus [int]
-%    - end_code, unique BCI2000 code for stimulus [int]
-%    - pad, time (in seconds) to pad around transition [2 x 1 array]
+%    - states: state information generated from load_BCI_dat.m [1 x 1 struct]
+%    - parameters: parameter information generated from load_BCI_dat.m [1 x 1 struct]
+%    - start_code: unique BCI2000 code for stimulus [int]
+%    - end_code: unique BCI2000 code for stimulus [int]
+%    - pad: time (in seconds) to pad around transition [2 x 1 array]
 % ArgOut:
-%    - epoch_start_idxs, index marking the transition from start_code to end-code [1 x n array]
-%    - epochs, indices surrounding transition from start_code to end-code
+%    - epoch_start_idxs: index marking the transition from start_code to end-code [1 x n array]
+%    - epochs: indices surrounding transition from start_code to end-code
 %    with padding applied before/after [n x 1 cell]
 %
 % E.G.,:
