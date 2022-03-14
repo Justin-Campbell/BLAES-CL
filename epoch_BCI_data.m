@@ -1,10 +1,10 @@
-function [epoch_start_idxs, epochs] = epoch_BCI_data(states, parameters, start_code, end_code, pad)
+function [epoch_start_idxs, epochs] = epoch_BCI_data(stimulus_codes, parameters, start_code, end_code, pad)
 % 
 % epoch_BCI_data finds the index which marks the transition between two
 % stimulus codes and creates an epoch around that transition.
 %
 % ArgIn: 
-%    - states: state information generated from load_BCI_dat.m [1 x 1 struct]
+%    - stimulus_codes: stimulus_code information generated from states var using load_BCI_dat.m [1 x 1 struct]
 %    - parameters: parameter information generated from load_BCI_dat.m [1 x 1 struct]
 %    - start_code: unique BCI2000 code for stimulus [int]
 %    - end_code: unique BCI2000 code for stimulus [int]
@@ -26,9 +26,9 @@ function [epoch_start_idxs, epochs] = epoch_BCI_data(states, parameters, start_c
 
 % Find Trials
 epoch_start_idxs = [];
-for i = 1:length(states.StimulusCode)
-    if states.StimulusCode(i) == end_code; % if stimulus code matches end_code
-        if states.StimulusCode(i - 1) == start_code; % and if previous stimulus code matches start_code
+for i = 1:length(stimulus_codes)
+    if stimulus_codes(i) == end_code; % if stimulus code matches end_code
+        if stimulus_codes(i - 1) == start_code; % and if previous stimulus code matches start_code
             epoch_start_idxs = [epoch_start_idxs (i)]; % add index of last sample to array (first instance of end_code, NOT last instance of start_code)
         end
     end

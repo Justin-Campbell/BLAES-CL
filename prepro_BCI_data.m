@@ -30,18 +30,17 @@ global Fs;
 %
 %% Re-Referencing
 processed_signal = zeros(size(signal));
+med_signal = double(median(signal,2));
 for i = 1:size(signal,2) % loop through chans
-    processed_signal(:,i) = double(signal(:,i)) - double(median(signal,2)); % common median re-reference
+    processed_signal(:,i) = double(signal(:,i)) - med_signal; % common median re-reference
 end
 
 %% Filtering
 [b60,a60] = iirnotch(60/(Fs/2), (60/(Fs/2))/25); % 60Hz IIR filter
 [b120,a120] = iirnotch(120/(Fs/2), (120/(Fs/2))/25); % 120Hz IIR filter
-[bBand,aBand] = butter(3,[2,249]/(Fs/2)); % 2-249Hz bandpass filter
 
 processed_signal = filtfilt(b60,a60,processed_signal); 
 processed_signal = filtfilt(b120,a120,processed_signal);
-processed_signal = filtfilt(bBand, aBand, processed_signal);
 
 %%
 
