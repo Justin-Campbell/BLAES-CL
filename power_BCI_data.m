@@ -1,9 +1,9 @@
 function power = power_BCI_data(signal, f_window)
 % 
-% prepro_BCI_data preprocesses BCI2000-style data. 
+% power_BCI_data calculates power for preprocessed BCI2000-style data. 
 %
 % ArgIn: 
-%    - signal: preprocessed, epoched signal generated from prepro_BCI_data.m and epoch_BCI_data.m [time x channel x epoch]
+%    - signal: preprocessed signal generated from prepro_BCI_data.m [time x channel x epoch]
 %    - f_window: frequency band for power calculation [2 x 1]
 
 % ArgOut:
