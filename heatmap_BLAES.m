@@ -14,11 +14,14 @@ function heatmap_BLAES(pwr, freqs_labels, chan_labels)
 %
 %% 
 
+med_pwr = squeeze(median(pwr));
+
+
 % Heatmap
 figure;
-h = heatmap(squeeze(median(pwr)));
+h = heatmap(normalize(med_pwr,1));
 colormap default;
-h.Title = 'Median Power';
+h.Title = 'Normalized Power';
 h.CellLabelFormat = '%.2f';
 h.XLabel = 'Frequency Band';
 h.YLabel = 'Channel';
